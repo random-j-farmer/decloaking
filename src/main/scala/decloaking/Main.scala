@@ -100,7 +100,6 @@ object Main {
   }
 
   def onResize(ev: dom.UIEvent) = {
-    resize()
     drawCanvas()
   }
 
@@ -113,7 +112,8 @@ object Main {
   def resize(): Unit = {
     // canvas height has to be set in javascript
     val parentDiv = mainCanvas.parentElement.asInstanceOf[html.Div]
-    parentDiv.style.height = parentDiv.parentElement.clientHeight.toString + "px"
+    val formHeight = mainForm.clientHeight
+    parentDiv.style.height = formHeight.toString + "px"
     mainCanvas.height = parentDiv.clientHeight - 20
     mainCanvas.width = parentDiv.clientWidth - 20
   }
@@ -131,7 +131,7 @@ object Main {
 
 }
 
-class Renderer(ctx: CanvasRenderingContext2D, p: Params, w: Double, h: Double) {
+case class Renderer(ctx: CanvasRenderingContext2D, p: Params, w: Double, h: Double) {
 
   val totalMeters = 2d * p.attackerRadius + p.distance + 2d * (2000d + p.victimRadius)
 
@@ -171,7 +171,7 @@ class Renderer(ctx: CanvasRenderingContext2D, p: Params, w: Double, h: Double) {
       endPos = end + i*delta
     } yield isDecloak(startPos, endPos)
 
-    println("decloaks", decloaks)
+    // println("decloaks", decloaks)
 
     (decloaks.count(x => x) * 100d/ decloaks.size).toInt
   }
@@ -191,6 +191,8 @@ class Renderer(ctx: CanvasRenderingContext2D, p: Params, w: Double, h: Double) {
   }
 
   def render(): Unit = {
+
+    ctx.clearRect(0d, 0d, w, h)
 
     ctx.save()
 
